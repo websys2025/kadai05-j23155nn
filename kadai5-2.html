@@ -4,9 +4,9 @@
     <title>演習課題5-2：外部APIの呼び出しテスト</title>
 </head>
 <body>
-    <h1 id="msg">何かのAPI</h1>
+    <h1 id="msg">国の情報API</h1>
     <form name="apiform"><p>
-        何かのフォーム：<input type="text" name="form_data">
+        国名（英語）：<input type="text" name="form_data">
         <button type="button" id="btn1" onclick="some_api(this.form)">実行</button>
     </p></form>
     
@@ -14,9 +14,22 @@
     <script>
         async function some_api(myForm) {
             // ここにコードを書く
-            document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
+            const name = myForm.form_data.value;
+            const url = `https://restcountries.com/v3.1/name/${name}`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const countryNameJp = data[0].translations.jpn.common;
+                const flagUrl = data[0].flags.png;
+
+                document.getElementById("result").innerHTML = `
+                    国名：${countryNameJp}<br>
+                    <img src="${flagUrl}" alt="国旗" width="100">
+                `;
+            } catch (error) {
+            document.getElementById("result").innerHTML += "エラーが発生しました。";
             document.apiform.reset();
-        }
+        }}
     </script>
 </body>
 </html>
